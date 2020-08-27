@@ -1,2 +1,1 @@
-# refactoringDemo
-A refactoring sample
+# refactoring-practice
