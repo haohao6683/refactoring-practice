@@ -33,22 +33,43 @@ function getVolumeCredits(perf, type, volumeCredits) {
     return volumeCredits;
 }
 
+function generateData(invoice, plays){
+    let data = {};
+    data.eachItems = new Array();
+    let volumeCredits = 0;
+    let totalAmount = 0;
+    data.customer = invoice.customer;
+    const format = getFormatter();
+    for (let perf of invoice.performances) {
+        let eachItem = {};
+        const play = plays[perf.playID];
+        volumeCredits = getVolumeCredits(perf, play.type, volumeCredits);
+        eachItem.playName = play.name;
+        eachItem.amount = format(getAmount(perf, play.type) / 100);
+        eachItem.audience = perf.audience;
+        totalAmount += thisAmount;
+        data.eachItems.push(eachItem);
+      }
+    data.totalAmount = format(totalAmount / 100);
+    data.volumeCredits = volumeCredits;
+
+    return data;
+}
+
+function generateTXTDoc(data){
+    let result = `Statement for ${data.customer}\n`;
+    for (let eachItem of data.eachItems){
+        result += ` ${eachItem.playName}: ${eachItem.amount} (${eachItem.audience} seats)\n`;
+    }
+
+    result += `Amount owed is ${data.totalAmount}\n`;
+    result += `You earned ${data.volumeCredits} credits \n`;
+    return result;
+}
+
 function statement (invoice, plays) {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
-  const format = getFormatter();
-for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
-    let thisAmount = getAmount(perf, play.type);
-    volumeCredits = getVolumeCredits(perf, play.type, volumeCredits);
-    //print line for this order
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
-    totalAmount += thisAmount;
-  }
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits \n`;
-  return result;
+    let data = generateData(invoice, plays);
+    return generateTXTDoc(data);
 }
 
 module.exports = {
