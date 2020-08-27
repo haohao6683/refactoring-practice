@@ -1,5 +1,6 @@
 const test = require('ava');
-const {statement} = require('../src/statement');
+const {statement, htmlStatement} = require('../src/statement');
+
 
 const plays = {
   'hamlet': {
@@ -185,7 +186,7 @@ test('statement case 8. Customer BigCo has three performances. ' +
       ],
     };
 
-    const result = statement(invoice, plays);
+    const result = htmlStatement(invoice, plays);
 
   t.is(result, '<h1>Statement for BigCo</h1>\n' +
     '<table>\n' +

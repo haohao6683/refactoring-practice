@@ -72,6 +72,28 @@ function statement (invoice, plays) {
     return generateTXTDoc(data);
 }
 
+function htmlStatement (invoice, plays) {
+    let data = generateData(invoice, plays);
+    return getHtmlDoc(data);
+}
+
+function getHtmlDoc (data) {
+    let result = `<h1>Statement for ${data.customer}</h1>\n` +
+                 '<table>\n' +
+                 '<tr><th>play</th><th>seats</th><th>cost</th></tr>';
+    for (let eachItem of data.eachItems){
+        result +=   ` <tr><td>${eachItem.playName}</td><td>`+
+                    `${eachItem.audience}`+
+                    `</td><td>${eachItem.amount}</td></tr>\n`;
+    }
+
+    result += `</table>\n`+
+              `<p>Amount owed is <em>${data.totalAmount}</em></p>\n`;
+    result += `<p>You earned <em>${data.volumeCredits}</em> credits</p>\n`;
+    return result;
+}
+
 module.exports = {
   statement,
+  htmlStatement,
 };
